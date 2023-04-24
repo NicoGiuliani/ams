@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from .models import Entry
 
 
 # Create your views here.
-def index(request):
-    return render(request, "index.html")
+def home(request):
+    entries = Entry.objects.all()
+    return render(request, "home.html", {"entries": entries})

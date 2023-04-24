@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block content %}
+<table class="table table-hover">
+  <thead>
+    <tr class="table-dark">
+      <th scope="col">Name</th>
+      <th scope="col">Species</th>
+      <th scope="col">Scientific Name</th>
+      <th scope="col">Photo</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in entries %}
+    <tr class="table-dark align-middle">
+      <th scope="row">{{entry.name}}</th>
+      <td>{{entry.common_name}}</td>
+      <td>{{entry.species}}</td>
+      <td>
+      {% thumbnail entry.photo "50x50" crop="center" as im %}
+      <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" />
+      {% endthumbnail %}
+      </td>
+    </tr>
+    {% endfor %}
+    
+  </tbody>
+</table>
+{% endblock %}
