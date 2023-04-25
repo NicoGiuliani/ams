@@ -9,7 +9,7 @@ class Entry(models.Model):
     name = models.CharField(max_length=50)
     common_name = models.CharField(max_length=50)
     species = models.CharField(max_length=100)
-    photo = models.ImageField(upload_to="images/")
+    photo = ImageField(upload_to="images/")
 
     def img_preview(self):
         return mark_safe(f"<img src='{self.photo.url}' width='300' />")

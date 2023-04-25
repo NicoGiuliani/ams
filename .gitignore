@@ -1,5 +1,6 @@
 ams/db.sqlite3
 ams/app/migrations/__pycache__
+ams/media/
 ams/ams/__pycache__
 ams/app/__pycache__
 venv
