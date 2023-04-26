@@ -23,6 +23,7 @@
       <th scope="col">Species</th>
       <th scope="col">Scientific Name</th>
       <th scope="col">Photo</th>
+      <th scope="col">Options</th>
     </tr>
   </thead>
 
@@ -43,6 +44,11 @@
           <img class="zoom rounded" src="{{ im.url }}" width="100px" height="100px" />
         </a>
       {% endthumbnail %}
+      </td>
+      <td>
+        <a href="{% url 'delete' entry.id %}">
+          <i class="fa-regular fa-trash-can"></i>
+        </a>
       </td>
     </tr>
   </div>

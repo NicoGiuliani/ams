@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block content %}
+<div class="container my-5 d-flex flex-column text-center">
+  <div class="delete-preview mb-5">
+    {% thumbnail entry.photo "500x500" crop="center" as im %}
+      <img class="rounded" src="{{ im.url }}" width="500px" height="500px" />
+    {% endthumbnail %}
+  </div>
+  <form method="POST">
+    {% csrf_token %}
+    <p>Are you sure you want to delete this entry?</p>
+    <input class="btn btn-danger" type="submit" value="Confirm"/>
+  </form>
+</div>
+{% endblock %}
