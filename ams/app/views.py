@@ -19,8 +19,21 @@ def entry(request, id):
 def edit(request, id):
     try:
         entry = Entry.objects.get(pk=id)
-        form = CreateForm(instance=entry)
-        return render(request, "create_form.html", {"form": form})
+        if request.method == "POST":
+            print("POST")
+            form = CreateForm(request.POST, request.FILES, instance=entry)
+            if form.is_valid():
+                print("IT'S VALID")
+                form.save()
+                return redirect("home")
+        else:
+            form = CreateForm(
+                instance=entry,
+                initial={
+                    "date_acquired": entry.date_acquired.strftime("%m/%d/%Y"),
+                },
+            )
+            return render(request, "create_form.html", {"form": form})
     except:
         print("Entry not found")
         return redirect("home")
@@ -29,12 +42,12 @@ def edit(request, id):
 def delete(request, id):
     entry = Entry.objects.get(pk=id)
     if request.method == "POST":
-        entry.delete()
-        try:
-            feeding_schedule = FeedingSchedule.objects.get(pk=id)
+        if entry.feeding_schedule:
+            feeding_schedule = FeedingSchedule.objects.get(pk=entry.feeding_schedule.id)
             feeding_schedule.delete()
-        except:
-            print("No feeding schedule found")
+        if entry.photo:
+            entry.photo.delete()
+        entry.delete()
         return redirect("home")
     else:
         return render(request, "delete.html", {"entry": entry})
@@ -61,7 +74,7 @@ def create(request):
                 date_acquired=new_date_acquired,
             )
             new_entry.save()
-            messages.success(request, "Entry has been saved successfully")
+            # messages.success(request, "Entry has been saved successfully")
             print("IT'S BEEN SAVED")
             return redirect("home")
             # return render(

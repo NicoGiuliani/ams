@@ -48,11 +48,11 @@
       </td>
       <td>
         <div class="menu_options d-flex flex-row gap-3">
-          <a href="{% url 'schedule' entry.id %}">
-            <i class="fa-regular fa-calendar text-secondary"></i>
-          </a>
           <a href="{% url 'edit' entry.id %}">
             <i class="fa-regular fa-pen-to-square text-secondary"></i>
+          </a>
+          <a href="{% url 'schedule' entry.id %}">
+            <i class="fa-regular fa-calendar text-secondary"></i>
           </a>
           <a href="{% url 'delete' entry.id %}">
             <i class="fa-regular fa-trash-can text-secondary"></i>

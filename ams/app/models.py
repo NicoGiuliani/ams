@@ -26,10 +26,11 @@ class Entry(models.Model):
     name = models.CharField(max_length=50)
     common_name = models.CharField(max_length=50)
     species = models.CharField(max_length=100)
+    sex = models.CharField(max_length=10)
     date_acquired = models.DateField()
     photo = ImageField(upload_to="images/", blank=True, null=True)
     feeding_schedule = models.OneToOneField(
-        FeedingSchedule, on_delete=models.DO_NOTHING, blank=True, null=True
+        FeedingSchedule, on_delete=models.SET_NULL, blank=True, null=True
     )
 
     def img_preview(self):

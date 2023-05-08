@@ -5,9 +5,31 @@
   <h1>{{entry.name}}</h1>
 
   <div class="mb-5" style="display: flex; flex-direction: row; justify-content: space-between; text-align: left;">
-    {% thumbnail entry.photo "500x500" crop="center" as im %}
-    <img class="rounded" src="{{im.url}}" style="box-shadow: 5px 5px 20px #999;" alt=""/>
-    {% endthumbnail %}
+    <div>
+      {% thumbnail entry.photo "500x500" crop="center" as im %}
+      <img class="rounded" src="{{im.url}}" style="box-shadow: 5px 5px 20px #999;" alt=""/>
+      {% endthumbnail %}
+      <table class="table">
+        <tbody>
+          <tr class="table-light align-middle">
+            <th scope="row" style="font-size: 1.2rem">Options</th>
+              <td>
+                <div class="menu_options d-flex flex-row gap-3 justify-content-end">
+                  <a href="{% url 'edit' entry.id %}">
+                    <i class="fa-regular fa-pen-to-square text-secondary"></i>
+                  </a>
+                  <a href="{% url 'schedule' entry.id %}">
+                    <i class="fa-regular fa-calendar text-secondary"></i>
+                  </a>
+                  <a href="{% url 'delete' entry.id %}">
+                    <i class="fa-regular fa-trash-can text-secondary"></i>
+                  </a>
+                </div>
+              </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="px-5 w-100">
       <table class="table table-hover">
         <tbody>
@@ -51,12 +73,15 @@
     </div>
   </div>
 
+
+  
+
   <!-- can row up the first few previews from the gallery -->
-  <div class="additional_photos">
+  <!-- <div class="additional_photos">
     {% thumbnail entry.photo "100x100" crop="center" as im %}
     <img class="rounded" src="{{im.url}}" style="box-shadow: 5px 5px 20px #999;" alt=""/>
     {% endthumbnail %}
-  </div>
+  </div> -->
 
   <!-- <video class="rounded" width="320" controls>
     <source src="{{MEDIA_URL}}{{entry.video}}" type="video/mp4" />

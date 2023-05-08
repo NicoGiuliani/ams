@@ -28,6 +28,11 @@ class CreateForm(forms.ModelForm):
         ),
         label="",
     )
+    sex = forms.ChoiceField(
+        choices=(("MALE", "Male"), ("FEMALE", "Female"), ("UNKNOWN", "Unknown")),
+        widget=forms.RadioSelect(attrs={"class": "d-inline-flex gap-5"}),
+        label="",
+    )
     date_acquired = forms.DateField(
         widget=forms.DateInput(
             attrs={
