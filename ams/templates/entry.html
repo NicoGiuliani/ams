@@ -3,7 +3,6 @@
 {% block content %}
 <div class="container my-5">
   <h1>{{entry.name}}</h1>
-
   <div class="mb-5" style="display: flex; flex-direction: row; justify-content: space-between; text-align: left;">
     <div>
       {% thumbnail entry.photo "500x500" crop="center" as im %}
@@ -15,14 +14,17 @@
             <th scope="row" style="font-size: 1.2rem">Options</th>
               <td>
                 <div class="menu_options d-flex flex-row gap-3 justify-content-end">
-                  <a href="{% url 'edit' entry.id %}">
+                  <a href="{% url 'edit' entry.id %}" title="Edit basic information">
                     <i class="fa-regular fa-pen-to-square text-secondary"></i>
                   </a>
-                  <a href="{% url 'schedule' entry.id %}">
+                  <a href="{% url 'schedule' entry.id %}" title="Create or change a feeding schedule">
                     <i class="fa-regular fa-calendar text-secondary"></i>
                   </a>
+                  <a href="{% url 'notes' entry.id %}" title="View notes">
+                    <i class="fa-regular fa-note-sticky text-secondary"></i>
+                  </a>
                   <a href="{% url 'delete' entry.id %}">
-                    <i class="fa-regular fa-trash-can text-secondary"></i>
+                    <i class="fa-regular fa-trash-can text-secondary" title="Delete this entry"></i>
                   </a>
                 </div>
               </td>

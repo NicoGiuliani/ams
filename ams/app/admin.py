@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Entry, FeedingSchedule
+from .models import Entry, FeedingSchedule, Note
 
 
 class EntryAdmin(admin.ModelAdmin):
@@ -9,3 +9,4 @@ class EntryAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(FeedingSchedule)
+admin.site.register(Note)

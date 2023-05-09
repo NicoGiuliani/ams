@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container my-5">
+  {% if messages %}
+  {% for message in messages %}
+  <p class="text-success">{{message}}</p>
+  {% endfor %}
+  {% endif %}
+  <h1 class="m-0">Notes for {{entry.name}}</h1>
+  <div class="d-flex flex-row gap-5">
+    <div class="col-8">
+      <table class="table table-hover">
+        <thead>
+          <tr">
+            <th scope="col">Note</th>
+            <th scope="col">Created at</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if notes %}
+          {% for note in notes %}
+          <tr>
+            <td class="col-9">
+              {{note.text}}
+            </td>
+            <td class="col-3">
+              {{note.created_at}}
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-4">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input class="btn btn-dark" type="submit" value="Add note"/>
+        <!-- <a href='{% url "delete_schedule" entry.id %}' class="btn btn-danger">Delete something???</a> -->
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

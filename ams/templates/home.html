@@ -38,7 +38,6 @@
       </th>
       <td>{{entry.common_name}}</td>
       <td>{{entry.species}}</td>
-      <!-- <td>{{entry.feeding_schedule.next_feed_date}}</td> -->
       <td>
       {% thumbnail entry.photo "500x500" crop="center" as im %}
         <a href="{% url 'entry' entry.id %}">
@@ -48,14 +47,17 @@
       </td>
       <td>
         <div class="menu_options d-flex flex-row gap-3">
-          <a href="{% url 'edit' entry.id %}">
+          <a href="{% url 'edit' entry.id %}" title="Edit basic information">
             <i class="fa-regular fa-pen-to-square text-secondary"></i>
           </a>
-          <a href="{% url 'schedule' entry.id %}">
+          <a href="{% url 'schedule' entry.id %}" title="Create or change a feeding schedule">
             <i class="fa-regular fa-calendar text-secondary"></i>
           </a>
+          <a href="{% url 'notes' entry.id %}" title="View notes">
+            <i class="fa-regular fa-note-sticky text-secondary"></i>
+          </a>
           <a href="{% url 'delete' entry.id %}">
-            <i class="fa-regular fa-trash-can text-secondary"></i>
+            <i class="fa-regular fa-trash-can text-secondary" title="Delete this entry"></i>
           </a>
         </div>
       </td>

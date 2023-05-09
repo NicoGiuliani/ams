@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <div class="container my-5">
   {% if messages %}
@@ -6,11 +7,12 @@
   <p class="text-success">{{message}}</p>
   {% endfor %}
   {% endif %}
-  <h1>Feeding schedule for {{name}}</h1>
+  <h1>Feeding schedule for {{entry.name}}</h1>
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Submit"/>
+    <input class="btn btn-dark" type="submit" value="Submit"/>
+    <a href='{% url "delete_schedule" entry.id %}' class="btn btn-danger">Delete feeding schedule</a>
   </form>
 </div>
 {% endblock %}

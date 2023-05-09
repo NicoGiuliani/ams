@@ -36,5 +36,14 @@ class Entry(models.Model):
     def img_preview(self):
         return mark_safe(f"<img src='{self.photo.url}' width='300' />")
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = "entries"
+
+
+class Note(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    belongs_to = models.ForeignKey(Entry, on_delete=models.CASCADE)
+    text = models.CharField(max_length=500, blank=True, null=True)

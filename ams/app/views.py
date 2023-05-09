@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from .models import Entry, FeedingSchedule
-from .forms import CreateForm, ScheduleForm
+from .models import Entry, FeedingSchedule, Note
+from .forms import CreateForm, NoteForm, ScheduleForm
 
 
 # Create your views here.
@@ -14,6 +14,35 @@ def entry(request, id):
     print(f"The ID for this page is {id}")
     entry = Entry.objects.get(pk=id)
     return render(request, "entry.html", {"entry": entry})
+
+
+def notes(request, id):
+    if request.method == "POST":
+        form = NoteForm(request.POST)
+        if form.is_valid():
+            try:
+                entry = Entry.objects.get(pk=id)
+            except:
+                return redirect("home")
+
+            new_text = form.cleaned_data["text"]
+            new_note = Note(
+                belongs_to=entry,
+                text=new_text,
+            )
+            new_note.save()
+            return redirect("notes", id)
+    else:
+        try:
+            entry = Entry.objects.get(pk=id)
+            notes = Note.objects.filter(belongs_to=entry)
+            form = NoteForm
+            return render(
+                request, "notes.html", {"entry": entry, "notes": notes, "form": form}
+            )
+        except:
+            print("Something went wrong")
+            return redirect("home")
 
 
 def edit(request, id):
@@ -31,6 +60,7 @@ def edit(request, id):
                 instance=entry,
                 initial={
                     "date_acquired": entry.date_acquired.strftime("%m/%d/%Y"),
+                    "sex": entry.sex,
                 },
             )
             return render(request, "create_form.html", {"form": form})
@@ -63,6 +93,7 @@ def create(request):
             new_name = form.cleaned_data["name"]
             new_common_name = form.cleaned_data["common_name"]
             new_species = form.cleaned_data["species"]
+            new_sex = form.cleaned_data["sex"]
             new_date_acquired = form.cleaned_data["date_acquired"]
             new_photo = form.cleaned_data["photo"]
 
@@ -70,6 +101,7 @@ def create(request):
                 name=new_name,
                 common_name=new_common_name,
                 species=new_species,
+                sex=new_sex,
                 photo=new_photo,
                 date_acquired=new_date_acquired,
             )
@@ -90,7 +122,6 @@ def schedule(request, id):
     if request.method == "POST":
         print("POST")
         form = ScheduleForm(request.POST, request.FILES)
-        print(form)
         if form.is_valid():
             print("IT'S VALID")
             new_food_type = form.cleaned_data["food_type"]
@@ -107,14 +138,11 @@ def schedule(request, id):
                 next_feed_date=new_next_feed_date,
             )
             new_entry.save()
-            Entry.objects.filter(id=id).update(feeding_schedule=new_entry)
+            entry = Entry.objects.filter(id=id)
+            entry.update(feeding_schedule=new_entry)
             messages.success(request, "Schedule has been saved successfully")
             print("IT'S BEEN SAVED")
-            return render(
-                request,
-                "feeding_schedule.html",
-                {"form": ScheduleForm, "success": True},
-            )
+            return redirect("entry", id)
     else:
         print("GET")
         entry = Entry.objects.get(pk=id)
@@ -132,6 +160,14 @@ def schedule(request, id):
                 },
             )
 
-        return render(
-            request, "feeding_schedule.html", {"form": form, "name": entry.name}
-        )
+        return render(request, "feeding_schedule.html", {"form": form, "entry": entry})
+
+
+def delete_schedule(request, id):
+    try:
+        entry = Entry.objects.get(pk=id)
+        feeding_schedule = entry.feeding_schedule
+        feeding_schedule.delete()
+    except:
+        print("Schedule not found")
+    return redirect("entry", id=id)
