@@ -47,33 +47,34 @@
             <th scope="row" style="font-size: 1.2rem">Date acquired</th>
             <td>{{entry.date_acquired}}</td>
           </tr>
-          {% if entry.feeding_schedule.food_type %}
+          {% if feeding_schedule.food_type %}
           <tr class="table-light align-middle">
             <th scope="row" style="font-size: 1.2rem">Food type</th>
             <td>
-              {{entry.feeding_schedule.food_type}} 
-              {% if entry.feeding_schedule.food_quantity %}
-                (x{{entry.feeding_schedule.food_quantity}})
+              {{feeding_schedule.food_type}} 
+              {% if feeding_schedule.food_quantity %}
+                (x{{feeding_schedule.food_quantity}})
               {% endif %}
             </td>
           </tr>
           {% endif %}
-          {% if entry.feeding_schedule.last_fed_date %}
+          {% if feeding_schedule.last_fed_date %}
           <tr class="table-light align-middle">
             <th scope="row" style="font-size: 1.2rem">Last fed date</th>
-            <td>{{entry.feeding_schedule.last_fed_date}}</td>
+            <td>{{feeding_schedule.last_fed_date}}</td>
           </tr>
           {% endif %}
-          {% if entry.feeding_schedule.next_feed_date %}
+          {% if feeding_schedule.next_feed_date %}
           <tr class="table-light align-middle" style="border-bottom-style: hidden">
             <th scope="row" style="font-size: 1.2rem">Next feed date</th>
-            <td>{{entry.feeding_schedule.next_feed_date}}</td>
+            <td>{{feeding_schedule.next_feed_date}}</td>
           </tr>
           {% endif %}
         </tbody>
       </table>
     </div>
   </div>
+  <a href="{% url 'home' %}" class="btn btn-light" style="position:absolute;top:108px;left:20px">Back</a>
 
 
   

@@ -25,8 +25,9 @@
           </a>
         </li>
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-sm-2 rounded" type="search" placeholder="Search">
+      <form class="d-flex" action="{% url 'search' %}" method="GET" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input class="form-control me-sm-2 rounded" type="search" name="query" placeholder="Search">
         <button class="btn btn-secondary my-2 my-sm-0 rounded" type="submit">Search</button>
       </form>
     </div>

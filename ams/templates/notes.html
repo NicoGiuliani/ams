@@ -21,10 +21,10 @@
           {% if notes %}
           {% for note in notes %}
           <tr>
-            <td class="col-9">
+            <td class="col-8">
               {{note.text}}
             </td>
-            <td class="col-3">
+            <td class="col-4">
               {{note.created_at}}
             </td>
           </tr>
@@ -42,5 +42,6 @@
       </form>
     </div>
   </div>
+  <a href="{% url 'entry' entry.id %}" class="btn btn-light" style="position:absolute;top:108px;left:20px">Back</a>
 </div>
 {% endblock %}

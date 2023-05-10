@@ -13,6 +13,7 @@
     {{ form.as_p }}
     <input class="btn btn-dark" type="submit" value="Submit"/>
     <a href='{% url "delete_schedule" entry.id %}' class="btn btn-danger">Delete feeding schedule</a>
+    <a href="{% url 'entry' entry.id %}" class="btn btn-light" style="position:absolute;top:108px;left:20px">Back</a>
   </form>
 </div>
 {% endblock %}

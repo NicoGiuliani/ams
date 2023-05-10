@@ -145,7 +145,7 @@ class ScheduleForm(forms.ModelForm):
             attrs={
                 "type": "text",
                 "class": "form-control",
-                "placeholder": "Next feed date",
+                "placeholder": "Next feed date (optional)",
                 "onfocus": "(this.type='date')",
                 "onblur": "if (this.value === '') { (this.type='text') }",
                 "title": "Next feed date",
@@ -157,4 +157,10 @@ class ScheduleForm(forms.ModelForm):
 
     class Meta:
         model = FeedingSchedule
-        fields = "__all__"
+        fields = [
+            "food_type",
+            "food_quantity",
+            "last_fed_date",
+            "feed_interval",
+            "next_feed_date",
+        ]

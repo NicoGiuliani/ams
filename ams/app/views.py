@@ -1,5 +1,7 @@
+import datetime
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
+from django.db.models import Q
 from .models import Entry, FeedingSchedule, Note
 from .forms import CreateForm, NoteForm, ScheduleForm
 
@@ -13,7 +15,13 @@ def home(request):
 def entry(request, id):
     print(f"The ID for this page is {id}")
     entry = Entry.objects.get(pk=id)
-    return render(request, "entry.html", {"entry": entry})
+    feeding_schedule = FeedingSchedule.objects.filter(belongs_to=entry)
+    if len(feeding_schedule) > 0:
+        feeding_schedule = feeding_schedule[0]
+    # print(feeding_schedule)
+    return render(
+        request, "entry.html", {"entry": entry, "feeding_schedule": feeding_schedule}
+    )
 
 
 def notes(request, id):
@@ -63,7 +71,7 @@ def edit(request, id):
                     "sex": entry.sex,
                 },
             )
-            return render(request, "create_form.html", {"form": form})
+            return render(request, "create_form.html", {"form": form, "id": id})
     except:
         print("Entry not found")
         return redirect("home")
@@ -72,9 +80,6 @@ def edit(request, id):
 def delete(request, id):
     entry = Entry.objects.get(pk=id)
     if request.method == "POST":
-        if entry.feeding_schedule:
-            feeding_schedule = FeedingSchedule.objects.get(pk=entry.feeding_schedule.id)
-            feeding_schedule.delete()
         if entry.photo:
             entry.photo.delete()
         entry.delete()
@@ -96,6 +101,7 @@ def create(request):
             new_sex = form.cleaned_data["sex"]
             new_date_acquired = form.cleaned_data["date_acquired"]
             new_photo = form.cleaned_data["photo"]
+            print(new_photo)
 
             new_entry = Entry(
                 name=new_name,
@@ -118,45 +124,83 @@ def create(request):
     return render(request, "create_form.html", {"form": CreateForm})
 
 
+def search(request):
+    if "query" in request.GET:
+        query = request.GET["query"]
+        search_results = Entry.objects.filter(
+            Q(name__icontains=query)
+            | Q(common_name__icontains=query)
+            | Q(species__icontains=query)
+            | Q(sex__iexact=query)
+        )
+        return render(request, "search.html", {"entries": search_results})
+
+
 def schedule(request, id):
     if request.method == "POST":
         print("POST")
-        form = ScheduleForm(request.POST, request.FILES)
+        form = ScheduleForm(request.POST)
         if form.is_valid():
             print("IT'S VALID")
+            try:
+                entry = Entry.objects.get(pk=id)
+            except:
+                print("Something didn't work")
+                return redirect("home")
+
             new_food_type = form.cleaned_data["food_type"]
             new_food_quantity = form.cleaned_data["food_quantity"]
             new_last_fed_date = form.cleaned_data["last_fed_date"]
-            new_next_feed_date = form.cleaned_data["next_feed_date"]
             new_feed_interval = form.cleaned_data["feed_interval"]
+            new_next_feed_date = form.cleaned_data["next_feed_date"]
 
-            new_entry = FeedingSchedule(
-                food_type=new_food_type,
-                food_quantity=new_food_quantity,
-                last_fed_date=new_last_fed_date,
-                feed_interval=new_feed_interval,
-                next_feed_date=new_next_feed_date,
-            )
-            new_entry.save()
-            entry = Entry.objects.filter(id=id)
-            entry.update(feeding_schedule=new_entry)
-            messages.success(request, "Schedule has been saved successfully")
-            print("IT'S BEEN SAVED")
+            if new_feed_interval and new_next_feed_date is None:
+                new_next_feed_date = new_last_fed_date + datetime.timedelta(
+                    days=new_feed_interval
+                )
+
+            feeding_schedule = FeedingSchedule.objects.filter(belongs_to=entry)
+            if len(feeding_schedule) > 0:
+                feeding_schedule.update(
+                    food_type=new_food_type,
+                    food_quantity=new_food_quantity,
+                    last_fed_date=new_last_fed_date,
+                    feed_interval=new_feed_interval,
+                    next_feed_date=new_next_feed_date,
+                )
+                print("updated")
+            else:
+                new_feeding_schedule = FeedingSchedule(
+                    belongs_to=entry,
+                    food_type=new_food_type,
+                    food_quantity=new_food_quantity,
+                    last_fed_date=new_last_fed_date,
+                    feed_interval=new_feed_interval,
+                    next_feed_date=new_next_feed_date,
+                )
+                new_feeding_schedule.save()
+                messages.success(request, "Schedule has been saved successfully")
+                print("IT'S BEEN SAVED")
             return redirect("entry", id)
     else:
         print("GET")
-        entry = Entry.objects.get(pk=id)
         form = ScheduleForm
-        if entry.feeding_schedule:
+        try:
+            entry = Entry.objects.get(pk=id)
+        except:
+            print("Something didn't work")
+            return redirect("home")
+        feeding_schedule = FeedingSchedule.objects.filter(belongs_to=entry)
+        if len(feeding_schedule) > 0:
+            feeding_schedule = feeding_schedule[0]
             form = ScheduleForm(
-                instance=entry.feeding_schedule,
+                instance=feeding_schedule,
                 initial={
-                    "last_fed_date": entry.feeding_schedule.last_fed_date.strftime(
+                    "last_fed_date": feeding_schedule.last_fed_date.strftime(
                         "%m/%d/%Y"
                     ),
-                    "next_feed_date": entry.feeding_schedule.next_feed_date.strftime(
-                        "%m/%d/%Y"
-                    ),
+                    # "feed_interval": None,
+                    "next_feed_date": None,
                 },
             )
 
@@ -166,7 +210,7 @@ def schedule(request, id):
 def delete_schedule(request, id):
     try:
         entry = Entry.objects.get(pk=id)
-        feeding_schedule = entry.feeding_schedule
+        feeding_schedule = FeedingSchedule.objects.get(belongs_to=entry)
         feeding_schedule.delete()
     except:
         print("Schedule not found")
