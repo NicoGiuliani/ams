@@ -1,17 +1,25 @@
 import datetime
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
+from django.contrib.auth.models import auth
 from django.db.models import Q
 from .models import Entry, FeedingSchedule, Note
 from .forms import CreateForm, NoteForm, ScheduleForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 
-# Create your views here.
+@login_required
 def home(request):
     entries = Entry.objects.all()
     return render(request, "home.html", {"entries": entries})
 
 
+def register(request):
+    return render(request, "register.html", {})
+
+
+@login_required
 def entry(request, id):
     print(f"The ID for this page is {id}")
     entry = Entry.objects.get(pk=id)
@@ -24,6 +32,7 @@ def entry(request, id):
     )
 
 
+@login_required
 def notes(request, id):
     if request.method == "POST":
         form = NoteForm(request.POST)
@@ -53,6 +62,7 @@ def notes(request, id):
             return redirect("home")
 
 
+@login_required
 def edit(request, id):
     try:
         entry = Entry.objects.get(pk=id)
@@ -77,6 +87,7 @@ def edit(request, id):
         return redirect("home")
 
 
+@login_required
 def delete(request, id):
     entry = Entry.objects.get(pk=id)
     if request.method == "POST":
@@ -88,6 +99,7 @@ def delete(request, id):
         return render(request, "delete.html", {"entry": entry})
 
 
+@login_required
 def create(request):
     if request.method == "POST":
         print("POST")
@@ -100,6 +112,7 @@ def create(request):
             new_species = form.cleaned_data["species"]
             new_sex = form.cleaned_data["sex"]
             new_date_acquired = form.cleaned_data["date_acquired"]
+            new_acquired_from = form.cleaned_data["acquired_from"]
             new_photo = form.cleaned_data["photo"]
             print(new_photo)
 
@@ -110,6 +123,7 @@ def create(request):
                 sex=new_sex,
                 photo=new_photo,
                 date_acquired=new_date_acquired,
+                acquired_from=new_acquired_from,
             )
             new_entry.save()
             # messages.success(request, "Entry has been saved successfully")
@@ -124,6 +138,7 @@ def create(request):
     return render(request, "create_form.html", {"form": CreateForm})
 
 
+@login_required
 def search(request):
     if "query" in request.GET:
         query = request.GET["query"]
@@ -132,10 +147,12 @@ def search(request):
             | Q(common_name__icontains=query)
             | Q(species__icontains=query)
             | Q(sex__iexact=query)
+            | Q(date_acquired__icontains=query)
         )
         return render(request, "search.html", {"entries": search_results})
 
 
+@login_required
 def schedule(request, id):
     if request.method == "POST":
         print("POST")
@@ -207,6 +224,7 @@ def schedule(request, id):
         return render(request, "feeding_schedule.html", {"form": form, "entry": entry})
 
 
+@login_required
 def delete_schedule(request, id):
     try:
         entry = Entry.objects.get(pk=id)
@@ -215,3 +233,10 @@ def delete_schedule(request, id):
     except:
         print("Schedule not found")
     return redirect("entry", id=id)
+
+
+@login_required
+def custom_logout(request):
+    logout(request)
+    messages.info(request, "Logged out successfully!")
+    return redirect("login")

@@ -11,6 +11,7 @@ class Entry(models.Model):
     species = models.CharField(max_length=100)
     sex = models.CharField(max_length=10)
     date_acquired = models.DateField()
+    acquired_from = models.CharField(max_length=100)
     photo = ImageField(upload_to="images/", blank=True, null=True)
 
     def img_preview(self):

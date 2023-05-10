@@ -2,6 +2,8 @@ from datetime import date
 from django import forms
 from django.db import models
 from .models import Entry, FeedingSchedule, Note
+from django.contrib.auth.forms import AuthenticationForm
+from django.forms.widgets import PasswordInput, TextInput
 
 
 class CreateForm(forms.ModelForm):
@@ -54,6 +56,17 @@ class CreateForm(forms.ModelForm):
                 "onfocus": "(this.type='date')",
                 "onblur": "if (this.value === '') { (this.type='text') }",
                 "title": "Date acquired",
+            }
+        ),
+        label="",
+    )
+    acquired_from = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Acquired from",
+                "title": "Acquired from",
             }
         ),
         label="",
@@ -164,3 +177,20 @@ class ScheduleForm(forms.ModelForm):
             "feed_interval",
             "next_feed_date",
         ]
+
+
+class UserLoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(UserLoginForm, self).__init__(*args, **kwargs)
+
+    username = forms.CharField(
+        widget=TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Username",
+            }
+        )
+    )
+    password = forms.CharField(
+        widget=PasswordInput(attrs={"class": "form-control", "placeholder": "Password"})
+    )
