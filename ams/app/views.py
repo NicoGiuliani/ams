@@ -1,10 +1,11 @@
 import datetime
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from django.contrib.auth.models import auth
+from django.contrib.auth.models import auth, User
+from django.contrib.auth import authenticate, login
 from django.db.models import Q
 from .models import Entry, FeedingSchedule, Note
-from .forms import CreateForm, NoteForm, ScheduleForm
+from .forms import CreateForm, NoteForm, ScheduleForm, RegistrationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
@@ -16,7 +17,24 @@ def home(request):
 
 
 def register(request):
-    return render(request, "register.html", {})
+    if request.method == "POST":
+        form = RegistrationForm(request.POST)
+        # print(form)
+        if form.is_valid():
+            new_user = form.save()
+            print(new_user)
+            messages.info(request, "Thanks for registering. You are now logged in.")
+            new_user = authenticate(
+                username=form.cleaned_data["username"],
+                password=form.cleaned_data["password1"],
+            )
+            login(request, new_user)
+            return redirect("home")
+        else:
+            print(form.errors)
+            return render(request, "register.html", {"form": form})
+
+    return render(request, "register.html", {"form": RegistrationForm})
 
 
 @login_required

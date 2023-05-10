@@ -2,6 +2,11 @@
 {% load thumbnail %}
 {% block content %}
 <div class="container my-5">
+  {% if messages %}
+  {% for message in messages %}
+  <p class="text-success">{{message}}</p>
+  {% endfor %}
+  {% endif %}
   <h1>{{entry.name}}</h1>
   <div class="mb-5" style="display: flex; flex-direction: row; justify-content: space-between; text-align: left;">
     <div>

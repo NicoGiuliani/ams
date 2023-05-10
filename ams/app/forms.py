@@ -2,7 +2,8 @@ from datetime import date
 from django import forms
 from django.db import models
 from .models import Entry, FeedingSchedule, Note
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.forms.widgets import PasswordInput, TextInput
 
 
@@ -194,3 +195,32 @@ class UserLoginForm(AuthenticationForm):
     password = forms.CharField(
         widget=PasswordInput(attrs={"class": "form-control", "placeholder": "Password"})
     )
+
+
+class RegistrationForm(UserCreationForm):
+    username = forms.CharField(
+        label="",
+        max_length=50,
+        widget=TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Username",
+            }
+        ),
+    )
+    password1 = forms.CharField(
+        label="",
+        widget=PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Password"}
+        ),
+    )
+    password2 = forms.CharField(
+        label="",
+        widget=PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Repeat password"}
+        ),
+    )
+
+    class Meta:
+        model = User
+        fields = ["username", "password1", "password2"]
