@@ -12,6 +12,11 @@
     {% csrf_token %}
     {{ form.as_p }}
     <input class="btn btn-dark" type="submit" value="Submit"/>
+    {% if hasPhoto %}
+    <a href="{% url 'delete_photo' id %}" class="btn btn-warning">Delete Photo</a>
+    {% endif %}
+
+    
     {% if id %}
     <a href="{% url 'entry' id %}" class="btn btn-light" style="position: absolute; top: 108px; left: 20px">Back</a>
     {% else %}

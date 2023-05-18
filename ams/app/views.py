@@ -86,6 +86,7 @@ def notes(request, id):
 def edit(request, id):
     try:
         entry = Entry.objects.filter(owner=request.user).get(pk=id)
+        hasPhoto = entry.photo
         if request.method == "POST":
             print("POST")
             form = CreateForm(request.POST, request.FILES, instance=entry)
@@ -101,7 +102,11 @@ def edit(request, id):
                     "sex": entry.sex,
                 },
             )
-            return render(request, "create_form.html", {"form": form, "id": id})
+            return render(
+                request,
+                "create_form.html",
+                {"form": form, "id": id, "hasPhoto": hasPhoto},
+            )
     except:
         print("Entry not found")
         return redirect("home")
@@ -118,6 +123,15 @@ def delete(request, id):
         return redirect("home")
     else:
         return render(request, "delete.html", {"entry": entry})
+
+
+@login_required
+def delete_photo(request, id):
+    entry = Entry.objects.filter(owner=request.user).get(pk=id)
+    if entry.photo:
+        thumbnail.delete(entry.photo)
+        entry.photo.delete()
+    return redirect("entry", id)
 
 
 @login_required
