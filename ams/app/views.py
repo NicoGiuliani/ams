@@ -12,7 +12,7 @@ from django.contrib.auth import logout
 
 @login_required
 def home(request):
-    entries = Entry.objects.all()
+    entries = Entry.objects.filter(owner=request.user)
     return render(request, "home.html", {"entries": entries})
 
 
@@ -26,6 +26,7 @@ def register(request):
             messages.info(request, "Thanks for registering. You are now logged in.")
             new_user = authenticate(
                 username=form.cleaned_data["username"],
+                email=form.cleaned_data["email"],
                 password=form.cleaned_data["password1"],
             )
             login(request, new_user)
@@ -40,7 +41,7 @@ def register(request):
 @login_required
 def entry(request, id):
     print(f"The ID for this page is {id}")
-    entry = Entry.objects.get(pk=id)
+    entry = Entry.objects.filter(owner=request.user).get(pk=id)
     feeding_schedule = FeedingSchedule.objects.filter(belongs_to=entry)
     if len(feeding_schedule) > 0:
         feeding_schedule = feeding_schedule[0]
@@ -56,7 +57,7 @@ def notes(request, id):
         form = NoteForm(request.POST)
         if form.is_valid():
             try:
-                entry = Entry.objects.get(pk=id)
+                entry = Entry.objects.filter(owner=request.user).get(pk=id)
             except:
                 return redirect("home")
 
@@ -69,7 +70,7 @@ def notes(request, id):
             return redirect("notes", id)
     else:
         try:
-            entry = Entry.objects.get(pk=id)
+            entry = Entry.objects.filter(owner=request.user).get(pk=id)
             notes = Note.objects.filter(belongs_to=entry)
             form = NoteForm
             return render(
@@ -83,7 +84,7 @@ def notes(request, id):
 @login_required
 def edit(request, id):
     try:
-        entry = Entry.objects.get(pk=id)
+        entry = Entry.objects.filter(owner=request.user).get(pk=id)
         if request.method == "POST":
             print("POST")
             form = CreateForm(request.POST, request.FILES, instance=entry)
@@ -107,7 +108,7 @@ def edit(request, id):
 
 @login_required
 def delete(request, id):
-    entry = Entry.objects.get(pk=id)
+    entry = Entry.objects.filter(owner=request.user).get(pk=id)
     if request.method == "POST":
         if entry.photo:
             entry.photo.delete()
@@ -132,9 +133,9 @@ def create(request):
             new_date_acquired = form.cleaned_data["date_acquired"]
             new_acquired_from = form.cleaned_data["acquired_from"]
             new_photo = form.cleaned_data["photo"]
-            print(new_photo)
 
             new_entry = Entry(
+                owner=request.user,
                 name=new_name,
                 common_name=new_common_name,
                 species=new_species,
@@ -178,7 +179,7 @@ def schedule(request, id):
         if form.is_valid():
             print("IT'S VALID")
             try:
-                entry = Entry.objects.get(pk=id)
+                entry = Entry.objects.filter(owner=request.user).get(pk=id)
             except:
                 print("Something didn't work")
                 return redirect("home")
@@ -221,7 +222,7 @@ def schedule(request, id):
         print("GET")
         form = ScheduleForm
         try:
-            entry = Entry.objects.get(pk=id)
+            entry = Entry.objects.filter(owner=request.user).get(pk=id)
         except:
             print("Something didn't work")
             return redirect("home")
@@ -245,7 +246,7 @@ def schedule(request, id):
 @login_required
 def delete_schedule(request, id):
     try:
-        entry = Entry.objects.get(pk=id)
+        entry = Entry.objects.filter(owner=request.user).get(pk=id)
         feeding_schedule = FeedingSchedule.objects.get(belongs_to=entry)
         feeding_schedule.delete()
     except:

@@ -1,10 +1,14 @@
 import datetime
+import uuid
 from django.db import models
 from django.utils.html import mark_safe
+from django.contrib.auth.models import User
 from sorl.thumbnail import ImageField
 
 
 class Entry(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=50)
     common_name = models.CharField(max_length=50)

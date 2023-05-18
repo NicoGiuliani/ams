@@ -1,11 +1,15 @@
 {% extends "base.html" %}
-{% load thumbnail %}
+{% load static thumbnail %}
 {% block content %}
 <div class="container my-5 d-flex flex-column text-center">
   <div class="delete-preview mb-5">
-    {% thumbnail entry.photo "500x500" crop="center" as im %}
-      <img class="rounded" src="{{ im.url }}" width="500px" height="500px" />
-    {% endthumbnail %}
+    {% if entry.photo %}
+      {% thumbnail entry.photo "500x500" crop="center" as im %}
+      <img class="rounded" src="{{im.url}}" style="box-shadow: 5px 5px 20px #999;" alt=""/>
+      {% endthumbnail %}
+      {% else %}
+      <img class="rounded" height="500px" width="500px" src="{% static 'images/default.jpg' %}" style="box-shadow: 5px 5px 20px #999;" alt="" />
+    {% endif %}
   </div>
   <form method="POST">
     {% csrf_token %}

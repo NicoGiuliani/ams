@@ -4,7 +4,7 @@ from django.db import models
 from .models import Entry, FeedingSchedule, Note
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.forms.widgets import PasswordInput, TextInput
+from django.forms.widgets import PasswordInput, TextInput, EmailInput
 
 
 class CreateForm(forms.ModelForm):
@@ -80,7 +80,14 @@ class CreateForm(forms.ModelForm):
 
     class Meta:
         model = Entry
-        fields = ["name", "common_name", "species", "date_acquired", "photo"]
+        fields = [
+            "name",
+            "common_name",
+            "species",
+            "date_acquired",
+            "photo",
+            "acquired_from",
+        ]
 
 
 class NoteForm(forms.ModelForm):
@@ -208,6 +215,14 @@ class RegistrationForm(UserCreationForm):
             }
         ),
     )
+    email = forms.EmailField(
+        widget=EmailInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Email",
+            }
+        )
+    )
     password1 = forms.CharField(
         label="",
         widget=PasswordInput(
@@ -223,4 +238,4 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ["username", "password1", "password2"]
+        fields = ["username", "email", "password1", "password2"]

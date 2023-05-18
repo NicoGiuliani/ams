@@ -6,14 +6,14 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("", views.home, name="home"),
-    path("entry/<int:id>", views.entry, name="entry"),
-    path("notes/<int:id>", views.notes, name="notes"),
+    path("entry/<uuid:id>", views.entry, name="entry"),
+    path("notes/<uuid:id>", views.notes, name="notes"),
     path("create/", views.create, name="create"),
     path("register/", views.register, name="register"),
-    path("edit/<int:id>", views.edit, name="edit"),
-    path("delete/<int:id>", views.delete, name="delete"),
-    path("schedule/<int:id>", views.schedule, name="schedule"),
-    path("delete_schedule/<int:id>", views.delete_schedule, name="delete_schedule"),
+    path("edit/<uuid:id>", views.edit, name="edit"),
+    path("delete/<uuid:id>", views.delete, name="delete"),
+    path("schedule/<uuid:id>", views.schedule, name="schedule"),
+    path("delete_schedule/<uuid:id>", views.delete_schedule, name="delete_schedule"),
     path("search/", views.search, name="search"),
     path(
         "accounts/",
