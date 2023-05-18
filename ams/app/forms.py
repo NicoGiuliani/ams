@@ -85,8 +85,8 @@ class CreateForm(forms.ModelForm):
             "common_name",
             "species",
             "date_acquired",
-            "photo",
             "acquired_from",
+            "photo",
         ]
 
 

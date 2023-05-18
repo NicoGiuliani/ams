@@ -8,6 +8,7 @@ from .models import Entry, FeedingSchedule, Note
 from .forms import CreateForm, NoteForm, ScheduleForm, RegistrationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from sorl import thumbnail
 
 
 @login_required
@@ -111,6 +112,7 @@ def delete(request, id):
     entry = Entry.objects.filter(owner=request.user).get(pk=id)
     if request.method == "POST":
         if entry.photo:
+            thumbnail.delete(entry.photo)
             entry.photo.delete()
         entry.delete()
         return redirect("home")
