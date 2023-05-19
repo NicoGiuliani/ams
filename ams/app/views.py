@@ -129,10 +129,13 @@ def delete(request, id):
 @login_required
 def delete_photo(request, id):
     entry = Entry.objects.filter(owner=request.user).get(pk=id)
-    if entry.photo:
-        thumbnail.delete(entry.photo)
-        entry.photo.delete()
-    return redirect("entry", id)
+    if request.method == "POST":
+        if entry.photo:
+            thumbnail.delete(entry.photo)
+            entry.photo.delete()
+        return redirect("entry", id)
+    else:
+        return render(request, "delete_photo.html", {"entry": entry})
 
 
 @login_required
