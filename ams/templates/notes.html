@@ -15,17 +15,28 @@
           <tr">
             <th scope="col">Note</th>
             <th scope="col">Created at</th>
+            <th scope="col">Options</th>
           </tr>
         </thead>
         <tbody>
           {% if notes %}
           {% for note in notes %}
           <tr>
-            <td class="col-8">
+            <td class="col-7">
               {{note.text}}
             </td>
             <td class="col-4">
               {{note.created_at}}
+            </td>
+            <td class="col-1">
+              <div class="menu_options d-flex flex-row gap-3">
+                <a href="{% url 'edit_note' note.id %}" title="Edit this note">
+                  <i class="fa-regular fa-pen-to-square text-secondary"></i>
+                </a>
+                <a href="{% url 'delete_note' note.id %}">
+                  <i class="fa-regular fa-trash-can text-secondary" title="Delete this note"></i>
+                </a>
+              </div>
             </td>
           </tr>
           {% endfor %}
@@ -37,8 +48,15 @@
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <input class="btn btn-dark" type="submit" value="Add note"/>
-        <!-- <a href='{% url "delete_schedule" entry.id %}' class="btn btn-danger">Delete something???</a> -->
+        
+        <input 
+          class="btn btn-dark" 
+          type="submit" 
+          value="{% if form.text.value %}Edit note{% else %}Add note{% endif %}"
+        />
+        {% if form.text.value %}
+        <a href='{% url "notes" entry.id %}' class="btn btn-secondary">Cancel</a>
+        {% endif %}
       </form>
     </div>
   </div>

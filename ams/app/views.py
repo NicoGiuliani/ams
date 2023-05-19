@@ -53,7 +53,7 @@ def entry(request, id):
 
 
 @login_required
-def notes(request, id):
+def notes(request, id, notes=None):
     if request.method == "POST":
         form = NoteForm(request.POST)
         if form.is_valid():
@@ -73,9 +73,10 @@ def notes(request, id):
         try:
             entry = Entry.objects.filter(owner=request.user).get(pk=id)
             notes = Note.objects.filter(belongs_to=entry)
-            form = NoteForm
             return render(
-                request, "notes.html", {"entry": entry, "notes": notes, "form": form}
+                request,
+                "notes.html",
+                {"entry": entry, "notes": notes, "form": NoteForm},
             )
         except:
             print("Something went wrong")
@@ -132,6 +133,39 @@ def delete_photo(request, id):
         thumbnail.delete(entry.photo)
         entry.photo.delete()
     return redirect("entry", id)
+
+
+@login_required
+def edit_note(request, id):
+    noteQueryObject = Note.objects.filter(pk=id)
+    note = Note.objects.get(pk=id)
+    entry = note.belongs_to
+    notes = Note.objects.filter(belongs_to=entry)
+    if request.method == "POST":
+        form = NoteForm(request.POST)
+        if form.is_valid():
+            new_text = form.cleaned_data["text"]
+            noteQueryObject.update(text=new_text)
+            return redirect("notes", entry.id)
+    else:
+        form = None
+        if request.user == entry.owner:
+            form = NoteForm(
+                instance=note,
+            )
+        return render(
+            request, "notes.html", {"entry": entry, "notes": notes, "form": form}
+        )
+
+
+@login_required
+def delete_note(request, id):
+    note = Note.objects.get(pk=id)
+    entry = note.belongs_to
+    if request.user == entry.owner:
+        note.delete()
+        messages.success(request, "Note deleted")
+    return redirect("notes", entry.id)
 
 
 @login_required

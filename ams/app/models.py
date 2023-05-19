@@ -29,6 +29,7 @@ class Entry(models.Model):
 
 
 class Note(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     belongs_to = models.ForeignKey(Entry, on_delete=models.CASCADE)
     text = models.CharField(max_length=500, blank=True, null=True)
