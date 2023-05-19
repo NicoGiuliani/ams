@@ -3,7 +3,12 @@ from django import forms
 from django.db import models
 from .models import Entry, FeedingSchedule, Note
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    UserCreationForm,
+    PasswordResetForm,
+    SetPasswordForm,
+)
 from django.forms.widgets import PasswordInput, TextInput, EmailInput
 
 
@@ -87,6 +92,7 @@ class CreateForm(forms.ModelForm):
             "date_acquired",
             "acquired_from",
             "photo",
+            "sex",
         ]
 
 
@@ -239,3 +245,51 @@ class RegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
+
+
+class UserPasswordResetForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super(UserPasswordResetForm, self).__init__(*args, **kwargs)
+        print("here it is")
+
+    email = forms.EmailField(
+        label="",
+        widget=forms.EmailInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Email",
+                "type": "email",
+                "name": "email",
+            }
+        ),
+    )
+
+
+class UserSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super(UserSetPasswordForm, self).__init__(*args, **kwargs)
+        print("hoooooo")
+
+    new_password1 = forms.CharField(
+        label="",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "New password",
+                "type": "password",
+                "name": "password1",
+            }
+        ),
+    )
+
+    new_password2 = forms.CharField(
+        label="",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "New password confirmation",
+                "type": "password",
+                "name": "password2",
+            }
+        ),
+    )

@@ -1,7 +1,7 @@
 from django.conf import settings
-from django.urls import path, include
+from django.urls import path, include, re_path
 from . import views
-from .forms import UserLoginForm
+from .forms import UserLoginForm, UserSetPasswordForm, UserPasswordResetForm
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -19,8 +19,12 @@ urlpatterns = [
     path("delete_schedule/<uuid:id>", views.delete_schedule, name="delete_schedule"),
     path("search/", views.search, name="search"),
     path(
-        "accounts/",
-        include("django.contrib.auth.urls"),
+        "accounts/reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="registration/password_reset_confirm.html",
+            form_class=UserSetPasswordForm,
+        ),
+        name="password_reset_confirm",
     ),
     path(
         "accounts/login",
@@ -34,5 +38,17 @@ urlpatterns = [
         "accounts/logout",
         views.custom_logout,
         name="logout",
+    ),
+    path(
+        "accounts/password_reset",
+        auth_views.PasswordResetView.as_view(
+            template_name="registration/password_reset_form.html",
+            form_class=UserPasswordResetForm,
+        ),
+        name="password_reset",
+    ),
+    path(
+        "accounts/",
+        include("django.contrib.auth.urls"),
     ),
 ]

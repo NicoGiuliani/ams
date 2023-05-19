@@ -42,14 +42,21 @@ def register(request):
 @login_required
 def entry(request, id):
     print(f"The ID for this page is {id}")
-    entry = Entry.objects.filter(owner=request.user).get(pk=id)
-    feeding_schedule = FeedingSchedule.objects.filter(belongs_to=entry)
-    if len(feeding_schedule) > 0:
-        feeding_schedule = feeding_schedule[0]
-    # print(feeding_schedule)
-    return render(
-        request, "entry.html", {"entry": entry, "feeding_schedule": feeding_schedule}
-    )
+    try:
+        entry = Entry.objects.filter(owner=request.user).get(pk=id)
+        feeding_schedule = FeedingSchedule.objects.filter(belongs_to=entry)
+        if len(feeding_schedule) > 0:
+            feeding_schedule = feeding_schedule[0]
+        # print(feeding_schedule)
+        return render(
+            request,
+            "entry.html",
+            {"entry": entry, "feeding_schedule": feeding_schedule},
+        )
+    except:
+        print("Entry not found")
+        messages.info(request, "Entry not found")
+        return redirect("home")
 
 
 @login_required
@@ -312,3 +319,9 @@ def custom_logout(request):
     logout(request)
     messages.info(request, "Logged out successfully!")
     return redirect("login")
+
+
+# only runs when debug is turned off
+def view_404(request, exception=None):
+    messages.info(request, "Page not found")
+    return redirect("home")
